@@ -8,7 +8,8 @@
  */
 
 define( 'JQUERY_STAGING', true );
-define( 'JQUERY_STAGING_FORMAT', 'local.%s:9412' );
+// define( 'JQUERY_STAGING_FORMAT', 'local.%s:9412' );
+define( 'JQUERY_STAGING_FORMAT', 'local.%s' );
 require_once __DIR__ . '/wp-content/sites.php' ;
 define( 'JQUERY_LIVE_SITE', jquery_site_extract( $_SERVER['HTTP_HOST'] ?? 'jquery.com' ) );
 

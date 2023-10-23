@@ -15,10 +15,12 @@ services:
       - ./jquery-wp-content:/var/www/html/wp-content
       - ./uploads:/var/www/html/wp-content/uploads:rw
       - ./wp-config.php:/var/www/html/wp-config.php
+      - ./ssl:/etc/apache2/ssl
       - ./apache/.htaccess:/var/www/html/.htaccess
       - ./apache/000-default.conf:/etc/apache2/sites-available/000-default.conf
     ports:
-      - "${JQUERY_WP_HTTP_PORT:-9412}:80"
+      - "80:80"
+      - "443:443"
     networks:
       - jquerynet
 
@@ -31,7 +33,7 @@ services:
     volumes:
       - jquerydbdata:/var/lib/mysql
     ports:
-      - "${JQUERY_WP_MYSQL_PORT:-9414}:3306"
+      - "3306:3306"
     networks:
       - jquerynet
 
