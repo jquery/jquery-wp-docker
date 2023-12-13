@@ -11,6 +11,7 @@ services:
       - WORDPRESS_DB_HOST=jquerydb:3306
       - WORDPRESS_DB_USER=root
       - WORDPRESS_DB_PASSWORD=root
+      - JQUERY_WP_HTTP_PORT=${JQUERY_WP_HTTP_PORT}
     volumes:
       - ./jquery-wp-content:/var/www/html/wp-content
       - ./uploads:/var/www/html/wp-content/uploads:rw
@@ -19,8 +20,8 @@ services:
       - ./apache/.htaccess:/var/www/html/.htaccess
       - ./apache/000-default.conf:/etc/apache2/sites-available/000-default.conf
     ports:
-      - "80:80"
-      - "443:443"
+      - "${JQUERY_WP_HTTP_PORT:-80}:80"
+      - "${JQUERY_WP_HTTPS_PORT:-443}:443"
     networks:
       - jquerynet
 
@@ -32,8 +33,6 @@ services:
       - MYSQL_ROOT_PASSWORD=root
     volumes:
       - jquerydbdata:/var/lib/mysql
-    ports:
-      - "3306:3306"
     networks:
       - jquerynet
 

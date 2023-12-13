@@ -24,9 +24,47 @@ define('SECURE_AUTH_KEY',  'put your unique phrase here');
 // etc.
 ```
 
-4. Run `docker compose up --build` to start the containers.
+4. Copy .env.example to .env and edit the file to define database credentials
 
-5. Import the database from a production WordPress instance.
+```sh
+cp .env.example .env
+```
+
+5. Optionally, add local SSL certs to the `ssl` directory.
+
+   * If you don't have any, you can generate them using [mkcert](https://github.com/FiloSottile/mkcert).
+     Run the following:
+
+     ```sh
+     mkcert -install
+     ```
+
+   * Then, in the `ssl` directory, run:
+     ```sh
+     mkcert \
+     local.jquery.com \
+     local.api.jquery.com \
+     local.blog.jquery.com \
+     local.learn.jquery.com \
+     local.releases.jquery.com \
+     local.jqueryui.com \
+     local.api.jqueryui.com \
+     local.blog.jqueryui.com \
+     local.jquerymobile.com \
+     local.api.jquerymobile.com \
+     local.blog.jquerymobile.com \
+     local.jquery.org \
+     local.brand.jquery.org \
+     local.contribute.jquery.org \
+     local.meetings.jquery.org
+     ```
+     Wildcards don't work for multi-level subdomains. Add each site to the list of domains.
+
+   * Rename the created certs to `cert.pem` and `cert-key.pem`.
+
+6. Run `docker compose up --build` to start the containers.
+
+7. Import the database from a production WordPress instance.
 
 ```sh
 # You need SSH admin access to this production server
@@ -44,7 +82,7 @@ scp wp-05.ops.jquery.net:~/wordpress.sql .
 docker exec -i jquerydb mysql -u root -proot < wordpress.sql
 ```
 
-6. Visit http://local.api.jquery.com:9412.
+8. Visit http://local.api.jquery.com, or https://local.api.jquery.com if you created certs.
 
 ## Updating
 
@@ -67,13 +105,21 @@ docker exec -it jquerydb mysql -u root -proot
 
 ### Ports
 
-If you already use port 9412 on your host, you can create a `.env` file in this directory and set the following environment variable with a port number of your own choosing:
+jquery-wp-docker is set up to use ports `80` and `443` by default so no extra work is needed to support SSL. However, if either port is in use on your host, you can create a `.env` file in this directory and set the following environment variable with a port number of your own choosing:
 
 ```
 JQUERY_WP_HTTP_PORT=8080
 ```
 
-Note that the MySQL port (JQUERY_WP_MYSQL_PORT=9414) is only exposed for debugging purposes, e.g. to allow you to connect to it from a GUI or some other tool. The webserver container connects to the MySQL container directly and does not use this port.
+Then, visit the port directly when visiting sites, e.g. http://local.api.jquery.com:4000.
+
+#### A note about port 443
+
+443 is only spun up by Apache if certs are available in the /ssl folder. However, the `docker-compose.yml` does still expose port `443` to the docker images's 443, even if nothing is listening on that port. This shouldn't be an issue in most cases, but the port can be changed in the `.env.` file to avoid any conflicts.
+
+```
+JQUERY_WP_HTTPS_PORT=0
+```
 
 ### DNS
 
