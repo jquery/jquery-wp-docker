@@ -108,7 +108,7 @@ docker exec -it jquerydb mysql -u root -proot
 jquery-wp-docker is set up to use ports `80` and `443` by default so no extra work is needed to support SSL. However, if either port is in use on your host, you can create a `.env` file in this directory and set the following environment variable with a port number of your own choosing:
 
 ```
-JQUERY_WP_HTTP_PORT=8080
+JQUERY_WP_HTTP_PORT=4000
 ```
 
 Then, visit the port directly when visiting sites, e.g. http://local.api.jquery.com:4000.
