@@ -78,7 +78,7 @@ cp .env.example .env
     ```sh
     # Copy the SQL dump from your home directory on the server (as created by the previous command)
     # NOTE: There must be no space between -p and the password!
-    scp wp-05.ops.jquery.net:~/wordpress.sql .
+    scp -C wp-05.ops.jquery.net:~/wordpress.sql .
     docker exec -i jquerydb mysql -u root -proot < wordpress.sql
     ```
 
@@ -97,7 +97,7 @@ cp .env.example .env
     And then locally:
 
     ```sh
-    scp wpblogs-01.ops.jquery.net:wordpress_blog_{jquery_com,jqueryui_com,jquerymobile_com}.sql .
+    scp -C wpblogs-01.ops.jquery.net:wordpress_blog_{jquery_com,jqueryui_com,jquerymobile_com}.sql .
 
     echo 'CREATE DATABASE IF NOT EXISTS wordpress_blog_jquery_com; CREATE DATABASE IF NOT EXISTS wordpress_blog_jqueryui_com; CREATE DATABASE IF NOT EXISTS wordpress_blog_jquerymobile_com;' | docker exec -i jquerydb mysql -u root -proot
 
