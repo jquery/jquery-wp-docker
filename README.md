@@ -64,47 +64,101 @@ cp .env.example .env
 
 6. Run `docker compose up --build` to start the containers.
 
-7. Import the database from a production WordPress instance.
+7. Construct the database.
 
-    ```sh
-    # You need SSH admin access to this production server
-    ssh wp-05.ops.jquery.net
+#### All users
 
-    sudo -u tarsnap mysqldump --databases `sudo -u tarsnap mysql -B -N -e "SHOW DATABASES LIKE 'wordpress_%'"` > wordpress.sql
-    ```
+You do not need to be an infrastructure team member to test jQuery websites. Each site can be deployed after installing wordpress locally, but the database for that site needs to be created first. The database name for each site is listed below:
 
-    Then, on your local machine, run:
+| Site | Database Name |
+|------|---------------|
+| jquery.com | wordpress_jquery_com |
+| api.jquery.com | wordpress_api_jquery_com |
+| blog.jquery.com | wordpress_blog_jquery_com |
+| learn.jquery.com | wordpress_learn_jquery_com |
+| releases.jquery.com | wordpress_releases_jquery_com |
+| jqueryui.com | wordpress_jqueryui_com |
+| api.jqueryui.com | wordpress_api_jqueryui_com |
+| blog.jqueryui.com | wordpress_blog_jqueryui_com |
+| jquerymobile.com | wordpress_jquerymobile_com |
+| api.jquerymobile.com | wordpress_api_jquerymobile_com |
+| blog.jquerymobile.com | wordpress_blog_jquerymobile_com |
+| jquery.org | wordpress_jquery_org |
+| brand.jquery.org | wordpress_brand_jquery_org |
+| contribute.jquery.org | wordpress_contribute_jquery_org |
+| meetings.jquery.org | wordpress_meetings_jquery_org |
 
-    ```sh
-    # Copy the SQL dump from your home directory on the server (as created by the previous command)
-    # NOTE: There must be no space between -p and the password!
-    scp -C wp-05.ops.jquery.net:~/wordpress.sql .
-    docker exec -i jquerydb mysql -u root -proot < wordpress.sql
-    ```
+Select the corresponding database name from the table above for the site you wish to test and run the following command to create the database:
 
-    Optionally, import the blog database as well. This uses a slightly different set of commands because our blogs have a shorter naming convention for their database than the doc sites. This stems from a time that the blogs were in fact native to the jquery.com site and database, and remain internally named as such.
+```sh
+'CREATE DATABASE IF NOT EXISTS wordpress_jquery_com;' | docker exec -i jquerydb mysql -u root -proot
+```
 
-    ```sh
-    ssh wpblogs-01.ops.jquery.net
+Then, visit the local site in your browser to complete the WordPress installation, such as http://local.api.jquery.com/wp-admin/install.php. Make sure the address begins with `local.`.
 
-    # Export wordpress_jquery, and import as wordpress_blog_jquery_com.
-    # Use --no-create-db to omit DB name during export, so we can set expected name during import.
-    sudo -u tarsnap mysqldump -p wordpress_jquery --no-create-db > wordpress_blog_jquery_com.sql;
-    sudo -u tarsnap mysqldump -p wordpress_jqueryui --no-create-db > wordpress_blog_jqueryui_com.sql;
-    sudo -u tarsnap mysqldump -p wordpress_jquerymobile --no-create-db > wordpress_blog_jquerymobile_com.sql;
-    ```
+Fill in the form with the following information:
 
-    And then locally:
+- Site Title: Any (e.g., "jQuery")
+- Username: Any
+- Password: Any
+- Your Email: Any email address
+- Search Engine Visibility: Uncheck
 
-    ```sh
-    scp -C wpblogs-01.ops.jquery.net:wordpress_blog_{jquery_com,jqueryui_com,jquerymobile_com}.sql .
+Click Install WordPress.
 
-    echo 'CREATE DATABASE IF NOT EXISTS wordpress_blog_jquery_com; CREATE DATABASE IF NOT EXISTS wordpress_blog_jqueryui_com; CREATE DATABASE IF NOT EXISTS wordpress_blog_jquerymobile_com;' | docker exec -i jquerydb mysql -u root -proot
+You should now be able to run `grunt deploy` from the corresponding jQuery site repo. Make sure the repo has a `config.json` with the following:
 
-    docker exec -i jquerydb mysql -u root -proot --database wordpress_blog_jquery_com < wordpress_blog_jquery_com.sql;
-    docker exec -i jquerydb mysql -u root -proot --database wordpress_blog_jqueryui_com < wordpress_blog_jqueryui_com.sql;
-    docker exec -i jquerydb mysql -u root -proot --database wordpress_blog_jquerymobile_com < wordpress_blog_jquerymobile_com.sql;
-    ```
+```json
+{
+	"url": "http://local.api.jquery.com",
+	"username": "dev",
+	"password": "dev"
+}
+```
+
+Replace the `url` with the site you are testing. The `dev` user is automatically created by this repo's wp-config.php.
+
+#### Infrastructure team members only
+
+```sh
+# You need SSH admin access to this production server
+ssh wp-05.ops.jquery.net
+
+sudo -u tarsnap mysqldump --databases `sudo -u tarsnap mysql -B -N -e "SHOW DATABASES LIKE 'wordpress_%'"` > wordpress.sql
+```
+
+Then, on your local machine, run:
+
+```sh
+# Copy the SQL dump from your home directory on the server (as created by the previous command)
+# NOTE: There must be no space between -p and the password!
+scp -C wp-05.ops.jquery.net:~/wordpress.sql .
+docker exec -i jquerydb mysql -u root -proot < wordpress.sql
+```
+
+Optionally, import the blog database as well. This uses a slightly different set of commands because our blogs have a shorter naming convention for their databases than the doc sites. This stems from a time that the blogs were in fact native to the jquery.com site and database, and remain internally named as such.
+
+```sh
+ssh wpblogs-01.ops.jquery.net
+
+# Export wordpress_jquery, and import as wordpress_blog_jquery_com.
+# Use --no-create-db to omit DB name during export, so we can set expected name during import.
+sudo -u tarsnap mysqldump -p wordpress_jquery --no-create-db > wordpress_blog_jquery_com.sql;
+sudo -u tarsnap mysqldump -p wordpress_jqueryui --no-create-db > wordpress_blog_jqueryui_com.sql;
+sudo -u tarsnap mysqldump -p wordpress_jquerymobile --no-create-db > wordpress_blog_jquerymobile_com.sql;
+```
+
+And then locally:
+
+```sh
+scp -C wpblogs-01.ops.jquery.net:wordpress_blog_{jquery_com,jqueryui_com,jquerymobile_com}.sql .
+
+echo 'CREATE DATABASE IF NOT EXISTS wordpress_blog_jquery_com; CREATE DATABASE IF NOT EXISTS wordpress_blog_jqueryui_com; CREATE DATABASE IF NOT EXISTS wordpress_blog_jquerymobile_com;' | docker exec -i jquerydb mysql -u root -proot
+
+docker exec -i jquerydb mysql -u root -proot --database wordpress_blog_jquery_com < wordpress_blog_jquery_com.sql;
+docker exec -i jquerydb mysql -u root -proot --database wordpress_blog_jqueryui_com < wordpress_blog_jqueryui_com.sql;
+docker exec -i jquerydb mysql -u root -proot --database wordpress_blog_jquerymobile_com < wordpress_blog_jquerymobile_com.sql;
+```
 
 8. Visit http://local.api.jquery.com, or https://local.api.jquery.com if you created certs.
 
