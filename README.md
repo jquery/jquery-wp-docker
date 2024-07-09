@@ -66,7 +66,7 @@ cp .env.example .env
 
 7. Construct the database.
 
-#### All users
+### Outside contributors
 
 You do not need to be an infrastructure team member to test jQuery websites. Each site can be deployed after installing wordpress locally, but the database for that site needs to be created first. The database name for each site is listed below:
 
@@ -118,7 +118,9 @@ You should now be able to run `grunt deploy` from the corresponding jQuery site 
 
 Replace the `url` with the site you are testing. The `dev` user is automatically created by this repo's wp-config.php.
 
-#### Infrastructure team members only
+After a successful deployment, visit http://local.api.jquery.com to see the site, or https://local.api.jquery.com if you created certs.
+
+### Infrastructure team members only
 
 ```sh
 # You need SSH admin access to this production server
@@ -160,7 +162,7 @@ docker exec -i jquerydb mysql -u root -proot --database wordpress_blog_jqueryui_
 docker exec -i jquerydb mysql -u root -proot --database wordpress_blog_jquerymobile_com < wordpress_blog_jquerymobile_com.sql;
 ```
 
-8. Visit http://local.api.jquery.com, or https://local.api.jquery.com if you created certs.
+Then visit http://local.api.jquery.com, or https://local.api.jquery.com if you created certs.
 
 ## Updating
 
