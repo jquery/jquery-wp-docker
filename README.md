@@ -91,7 +91,7 @@ You do not need to be an infrastructure team member to test jQuery websites. Eac
 Select the corresponding database name from the table above for the site you wish to test and run the following command to create the database:
 
 ```sh
-'CREATE DATABASE IF NOT EXISTS wordpress_jquery_com;' | docker exec -i jquerydb mysql -u root -proot
+'CREATE DATABASE IF NOT EXISTS wordpress_api_jquery_com;' | docker exec -i jquerydb mysql -u root -proot
 ```
 
 Then, visit the local site in your browser to complete the WordPress installation, such as http://local.api.jquery.com/wp-admin/install.php. Make sure the address begins with `local.`.
