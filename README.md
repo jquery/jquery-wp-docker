@@ -93,7 +93,7 @@ This repo has the necessary setup for running [jquery-wp-content](https://github
     Select the corresponding database name from the table above for the site you wish to test and run the following command to create the database:
 
     ```sh
-    'CREATE DATABASE IF NOT EXISTS wordpress_api_jquery_com;' | docker exec -i jquerydb mysql -u root -proot
+    echo 'CREATE DATABASE IF NOT EXISTS wordpress_api_jquery_com;' | docker exec -i jquerydb mysql -u root -proot
     ```
 
     Then, finish installing WordPress by visiting the appropriate install URL for that site, such as http://local.api.jquery.com/wp-admin/install.php. Make sure the address begins with `local.`.
