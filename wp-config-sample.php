@@ -9,7 +9,8 @@
 $port = getenv('JQUERY_WP_HTTP_PORT');
 define( 'JQUERY_STAGING_FORMAT', $port ? 'local.%s:' . $port : 'local.%s' );
 
-define( 'JQUERY_STAGING', true );
+// Set to true on staging sites, 'local' for local testing.
+define( 'JQUERY_STAGING', 'local' );
 require_once __DIR__ . '/wp-content/sites.php' ;
 define( 'JQUERY_LIVE_SITE', jquery_site_extract( $_SERVER['HTTP_HOST'] ?? 'jquery.com' ) );
 
